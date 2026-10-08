@@ -1,0 +1,45 @@
+{
+    "name": "platform/module-connector",
+    "description": "Minimal connector for the platform: invoice PDF endpoint, signed customer identity, version endpoint, quote attribute + order link (attribution seed).",
+    "type": "magento2-module",
+    "version": "1.1.0",
+    "license": "proprietary",
+    "require": {
+        "php": "~8.2.0||~8.3.0||~8.4.0",
+        "magento/framework": "^103.0",
+        "magento/module-sales": "*",
+        "magento/module-customer": "*",
+        "magento/module-store": "*",
+        "magento/module-quote": "*",
+        "magento/module-checkout": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "phpstan/phpstan": "^2.1",
+        "bitexpert/phpstan-magento": "^0.40"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://mirror.mage-os.org/",
+            "only": [
+                "magento/*"
+            ]
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Platform\\Connector\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "magento/composer-dependency-version-audit-plugin": false,
+            "magento/magento-composer-installer": false,
+            "phpstan/extension-installer": true
+        }
+    }
+}

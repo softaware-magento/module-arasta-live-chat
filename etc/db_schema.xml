@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- R-PD-02/03: the conversation id travels from the quote to the order (etc/fieldset.xml copies it). -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="quote">
+        <column xsi:type="varchar" name="platform_conversation_id" length="64" nullable="true" comment="Platform conversation id (attribution seed)"/>
+    </table>
+    <table name="sales_order">
+        <column xsi:type="varchar" name="platform_conversation_id" length="64" nullable="true" comment="Platform conversation id (attribution seed)"/>
+    </table>
+</schema>

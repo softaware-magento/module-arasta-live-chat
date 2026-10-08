@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- R-MOD-01 and R-MOD-03: integration-token protected via the Platform_Connector::api ACL resource.
+     R-PD-02 (Phase 2): the quote attribute endpoint is called by the shopper's browser (customer session or guest masked
+     quote id), so it is anonymous; the service resolves and checks the quote server-side. -->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/platform/invoices/:invoiceId/pdf" method="GET">
+        <service class="Platform\Connector\Api\InvoicePdfInterface" method="get"/>
+        <resources>
+            <resource ref="Platform_Connector::api"/>
+        </resources>
+    </route>
+    <route url="/V1/platform/version" method="GET">
+        <service class="Platform\Connector\Api\VersionInterface" method="get"/>
+        <resources>
+            <resource ref="Platform_Connector::api"/>
+        </resources>
+    </route>
+    <route url="/V1/platform/quote/attribute" method="POST">
+        <service class="Platform\Connector\Api\QuoteAttributeInterface" method="set"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>

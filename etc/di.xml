@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Platform\Connector\Api\InvoicePdfInterface" type="Platform\Connector\Model\InvoicePdf"/>
+    <preference for="Platform\Connector\Api\VersionInterface" type="Platform\Connector\Model\Version"/>
+    <preference for="Platform\Connector\Api\Data\PdfFileInterface" type="Platform\Connector\Model\Data\PdfFile"/>
+    <preference for="Platform\Connector\Api\Data\VersionInfoInterface" type="Platform\Connector\Model\Data\VersionInfo"/>
+    <preference for="Platform\Connector\Api\QuoteAttributeInterface" type="Platform\Connector\Model\QuoteAttribute"/>
+</config>

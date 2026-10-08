@@ -1,0 +1,10 @@
+<?php
+/** @var \Platform\Connector\Block\WidgetLoader $block */
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+<script type="text/x-magento-init">
+    {"*": {"Platform_Connector/js/identity": {
+        "loaderUrl": "<?= $escaper->escapeJs($block->getLoaderUrl()) ?>",
+        "storeKey": "<?= $escaper->escapeJs($block->getStoreKey()) ?>"
+    }}}
+</script>

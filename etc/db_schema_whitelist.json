@@ -1,0 +1,12 @@
+{
+    "quote": {
+        "column": {
+            "platform_conversation_id": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "platform_conversation_id": true
+        }
+    }
+}

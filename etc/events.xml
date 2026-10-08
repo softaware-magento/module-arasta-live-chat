@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- R-PD-03: post the placed order to the platform when its quote carried the conversation id. -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_after">
+        <observer name="platform_connector_order_link" instance="Platform\Connector\Observer\OrderPlaced"/>
+    </event>
+</config>

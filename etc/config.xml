@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <platform_connector>
+            <widget>
+                <loader_url/>
+                <store_key/>
+            </widget>
+            <identity>
+                <signing_secret/>
+                <ttl_seconds>3600</ttl_seconds>
+            </identity>
+        </platform_connector>
+    </default>
+</config>
