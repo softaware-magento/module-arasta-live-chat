@@ -1,7 +1,0 @@
-includes:
-    - vendor/bitexpert/phpstan-magento/extension.neon
-parameters:
-    level: 6
-    paths: [Api, Block, CustomerData, Model]
-    magento:
-        checkServiceContracts: false

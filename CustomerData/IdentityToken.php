@@ -1,36 +1,41 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\CustomerData;
+namespace Softaware\ArastaLiveChat\CustomerData;
 
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\CustomerData\SectionSourceInterface;
 use Magento\Customer\Helper\Session\CurrentCustomer;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
-use Magento\Store\Model\ScopeInterface;
-use Platform\Connector\Model\IdentityTokenIssuer;
+use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
+use Softaware\ArastaLiveChat\Model\Config;
+use Softaware\ArastaLiveChat\Model\IdentityTokenIssuer;
 
 /**
- * R-MOD-02: private-content section holding the signed identity token of the logged-in customer.
- * Served through customer-data (never full-page cached). Phase 2 (R-PD-02): for guests it also carries the masked id
- * of the active quote (`cartId`), which the widget loader sends to the quote attribute endpoint.
+ * Private-content section `platform-identity`: the signed identity token of the logged-in customer. Served through
+ * customer-data (never full-page cached). For guests it carries the masked id of the active quote (`cartId`), which
+ * the widget sends to the quote attribute endpoint. Empty when the module is disabled or not configured.
  */
 class IdentityToken implements SectionSourceInterface
 {
-    public const XML_SECRET = 'platform_connector/identity/signing_secret';
-    public const XML_TTL = 'platform_connector/identity/ttl_seconds';
+    private const EMPTY = ['token' => null, 'expiresAt' => null, 'cartId' => null];
 
     public function __construct(
         private readonly CurrentCustomer $currentCustomer,
-        private readonly ScopeConfigInterface $scopeConfig,
-        private readonly EncryptorInterface $encryptor,
+        private readonly Config $config,
         private readonly IdentityTokenIssuer $issuer,
         private readonly CheckoutSession $checkoutSession,
         private readonly QuoteIdToMaskedQuoteIdInterface $quoteIdToMaskedQuoteId,
-        private readonly QuoteIdMaskFactory $quoteIdMaskFactory
+        private readonly QuoteIdMaskFactory $quoteIdMaskFactory,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -39,16 +44,28 @@ class IdentityToken implements SectionSourceInterface
      */
     public function getSectionData(): array
     {
-        $customerId = (int) $this->currentCustomer->getCustomerId();
-        $secret = $this->secret();
-        if ($customerId <= 0 || $secret === null) {
-            return ['token' => null, 'expiresAt' => null, 'cartId' => $customerId <= 0 ? $this->guestCartId() : null];
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        if (!$this->config->isWidgetActive($storeId)) {
+            return self::EMPTY;
         }
-        $customer = $this->currentCustomer->getCustomer();
+        $customerId = (int) $this->currentCustomer->getCustomerId();
+        if ($customerId <= 0) {
+            return ['cartId' => $this->guestCartId()] + self::EMPTY;
+        }
+        $secret = $this->config->signingSecret($storeId);
+        if ($secret === null) {
+            return self::EMPTY;
+        }
         $now = time();
-        $ttl = (int) ($this->scopeConfig->getValue(self::XML_TTL, ScopeInterface::SCOPE_STORE) ?: IdentityTokenIssuer::MAX_TTL_SECONDS);
-        $token = $this->issuer->issue($secret, $customerId, (string) $customer->getEmail(), $now, $ttl);
-        return ['token' => $token, 'expiresAt' => $now + min($ttl, IdentityTokenIssuer::MAX_TTL_SECONDS), 'cartId' => null];
+        $ttl = min(max($this->config->tokenLifetime($storeId), IdentityTokenIssuer::MIN_TTL_SECONDS), IdentityTokenIssuer::MAX_TTL_SECONDS);
+        try {
+            $token = $this->issuer->issue($secret, $customerId, (string) $this->currentCustomer->getCustomer()->getEmail(), $now, $ttl);
+        } catch (\InvalidArgumentException $e) {
+            // Secret shorter than 32 characters (only possible through env.php / config:set): no token.
+            $this->logger->warning('Arasta Live Chat: identity token not issued: ' . $e->getMessage());
+            return self::EMPTY;
+        }
+        return ['token' => $token, 'expiresAt' => $now + $ttl, 'cartId' => null];
     }
 
     /** Masked id of the guest's active quote (created on demand, as the guest cart API does); null without a quote. */
@@ -69,15 +86,5 @@ class IdentityToken implements SectionSourceInterface
         } catch (\Throwable) {
             return null;
         }
-    }
-
-    private function secret(): ?string
-    {
-        $value = (string) $this->scopeConfig->getValue(self::XML_SECRET, ScopeInterface::SCOPE_STORE);
-        if ($value === '') {
-            return null;
-        }
-        // Accept values stored encrypted (e.g. "0:3:...") as well as plain values from env.php (--lock-env).
-        return preg_match('/^\d+:\d+:/', $value) === 1 ? $this->encryptor->decrypt($value) : $value;
     }
 }

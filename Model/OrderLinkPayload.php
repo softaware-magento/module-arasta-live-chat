@@ -1,12 +1,17 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Model;
+namespace Softaware\ArastaLiveChat\Model;
 
 /**
- * R-PD-03: the signed body the module posts to the platform when an order placed from a tagged quote is saved.
+ * the signed body the module posts to the platform when an order placed from a tagged quote is saved.
  * `POST {api}/public/v1/integrations/magento/orders` with `X-Platform-Signature: sha256=<hex HMAC of the raw body>`
- * keyed with the store signing secret (the secret that also signs the customer identity, spec 9.4).
+ * keyed with the store signing secret (the secret that also signs the customer identity).
  * Framework-independent so it can be unit tested without Magento.
  */
 class OrderLinkPayload

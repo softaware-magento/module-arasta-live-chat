@@ -1,7 +1,12 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Api\Data;
+namespace Softaware\ArastaLiveChat\Api\Data;
 
 interface PdfFileInterface
 {

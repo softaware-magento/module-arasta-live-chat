@@ -3,7 +3,13 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Platform_Connector::api" title="Platform connector API" sortOrder="900"/>
+                <resource id="Softaware_Core::core" title="Softaware" translate="title" sortOrder="50">
+                    <resource id="Softaware_ArastaLiveChat::main" title="Arasta Live Chat" translate="title" sortOrder="15">
+                        <!-- Granted to the Arasta integration (System > Integrations > API): invoice PDF and version endpoints. -->
+                        <resource id="Softaware_ArastaLiveChat::api" title="Arasta Live Chat API" translate="title" sortOrder="10"/>
+                        <resource id="Softaware_ArastaLiveChat::config" title="Arasta Live Chat Settings" translate="title" sortOrder="20"/>
+                    </resource>
+                </resource>
             </resource>
         </resources>
     </acl>

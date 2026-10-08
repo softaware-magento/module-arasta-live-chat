@@ -1,0 +1,93 @@
+<?php
+/**
+ * Softaware Arasta Live Chat: widget loader for Hyvä themes (vanilla JS, no RequireJS).
+ *
+ * The identity token and guest cart id come from Hyvä private content (`private-content-loaded`, section
+ * `platform-identity`), so full-page-cached HTML never contains them.
+ *
+ * @var \Softaware\ArastaLiveChat\Block\WidgetLoader $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Hyva\Theme\ViewModel\HyvaCsp $hyvaCsp
+ */
+$config = [
+    'loaderUrl' => $block->getLoaderUrl(),
+    'storeId' => $block->getArastaStoreId(),
+    'section' => $block->getSectionName(),
+];
+?>
+<script>
+    (() => {
+        const config = <?= /* @noEscape */ json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>;
+        const SCRIPT_ID = 'platform-widget-loader';
+        const MARGIN_MS = 30000;
+        if (document.getElementById(SCRIPT_ID)) {
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = config.loaderUrl;
+        script.async = true;
+        script.id = SCRIPT_ID;
+        script.setAttribute('data-store-id', config.storeId);
+
+        let appended = false;
+        let timer = null;
+        let retried = false;
+
+        const append = () => {
+            if (!appended) {
+                appended = true;
+                document.body.appendChild(script);
+            }
+        };
+
+        const refresh = () => {
+            fetch(`${BASE_URL}customer/section/load/?sections=${encodeURIComponent(config.section)}&force_new_section_timestamp=true`, {
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                credentials: 'include'
+            })
+                .then(response => response.ok ? response.json() : {})
+                .then(sections => apply(sections[config.section] || {}))
+                .catch(() => {});
+        };
+
+        const apply = (data) => {
+            let token = (data && data.token) || null;
+            const expiresAt = data && data.expiresAt ? data.expiresAt * 1000 : 0;
+
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            if (token && expiresAt && expiresAt - MARGIN_MS <= Date.now()) {
+                if (!retried) {
+                    retried = true;
+                    token = null;
+                    refresh();
+                }
+            } else if (token && expiresAt) {
+                retried = false;
+                timer = setTimeout(refresh, Math.max(expiresAt - MARGIN_MS - Date.now(), 1000));
+            }
+            if (token) {
+                script.setAttribute('data-customer-token', token);
+            } else {
+                script.removeAttribute('data-customer-token');
+            }
+            if (data && data.cartId) {
+                script.setAttribute('data-cart-id', data.cartId);
+            } else {
+                script.removeAttribute('data-cart-id');
+            }
+            window.dispatchEvent(new CustomEvent('platform:identity', {detail: {token}}));
+            append();
+        };
+
+        window.addEventListener('private-content-loaded', (event) => {
+            const sections = (event.detail && event.detail.data) || {};
+            apply(sections[config.section] || {});
+        });
+        // Load the widget even if private content never arrives (for example with storage disabled).
+        setTimeout(append, 3000);
+    })();
+</script>
+<?php if (isset($hyvaCsp)) { $hyvaCsp->registerInlineScript(); } ?>

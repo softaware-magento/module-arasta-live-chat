@@ -1,15 +1,20 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Api;
+namespace Softaware\ArastaLiveChat\Api;
 
 /**
- * R-MOD-03: capability discovery.
+ * capability discovery.
  */
 interface VersionInterface
 {
     /**
-     * @return \Platform\Connector\Api\Data\VersionInfoInterface
+     * @return \Softaware\ArastaLiveChat\Api\Data\VersionInfoInterface
      */
     public function get(): Data\VersionInfoInterface;
 }

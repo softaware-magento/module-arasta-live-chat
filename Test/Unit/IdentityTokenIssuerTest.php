@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Platform\Connector\Test\Unit;
+namespace Softaware\ArastaLiveChat\Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Platform\Connector\Model\IdentityTokenIssuer;
+use Softaware\ArastaLiveChat\Model\IdentityTokenIssuer;
 
 class IdentityTokenIssuerTest extends TestCase
 {
@@ -15,7 +15,7 @@ class IdentityTokenIssuerTest extends TestCase
         return json_decode(base64_decode(strtr($part, '-_', '+/')), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    /** R-MOD-02: HS256 token with sub, email, iat and exp as in spec 9.4 */
+    /** HS256 token with sub, email, iat and exp */
     public function testIssuesHs256TokenWithSpecClaims(): void
     {
         $token = (new IdentityTokenIssuer())->issue(self::SECRET, 42, 'alice@example.com', 1_790_000_000, 3600);
@@ -26,7 +26,7 @@ class IdentityTokenIssuerTest extends TestCase
         self::assertSame($expected, $signature);
     }
 
-    /** R-MOD-02: exp is capped at one hour */
+    /** exp is capped at one hour */
     public function testCapsLifetimeAtOneHour(): void
     {
         $token = (new IdentityTokenIssuer())->issue(self::SECRET, 1, 'a@b.c', 100, 86_400);

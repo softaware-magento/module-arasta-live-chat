@@ -1,10 +1,13 @@
 <?php
-/** @var \Platform\Connector\Block\WidgetLoader $block */
-/** @var \Magento\Framework\Escaper $escaper */
+/**
+ * Softaware Arasta Live Chat: widget loader (Luma and other RequireJS themes).
+ *
+ * @var \Softaware\ArastaLiveChat\Block\WidgetLoader $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$init = ['*' => ['Softaware_ArastaLiveChat/js/identity' => [
+    'loaderUrl' => $block->getLoaderUrl(),
+    'storeId' => $block->getArastaStoreId(),
+]]];
 ?>
-<script type="text/x-magento-init">
-    {"*": {"Platform_Connector/js/identity": {
-        "loaderUrl": "<?= $escaper->escapeJs($block->getLoaderUrl()) ?>",
-        "storeKey": "<?= $escaper->escapeJs($block->getStoreKey()) ?>"
-    }}}
-</script>
+<script type="text/x-magento-init"><?= /* @noEscape */ json_encode($init, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?></script>

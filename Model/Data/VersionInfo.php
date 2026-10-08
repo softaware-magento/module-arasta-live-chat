@@ -1,9 +1,14 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Model\Data;
+namespace Softaware\ArastaLiveChat\Model\Data;
 
-use Platform\Connector\Api\Data\VersionInfoInterface;
+use Softaware\ArastaLiveChat\Api\Data\VersionInfoInterface;
 
 class VersionInfo implements VersionInfoInterface
 {

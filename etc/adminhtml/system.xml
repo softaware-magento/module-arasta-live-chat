@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="softaware_arasta_live_chat" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Arasta Live Chat</label>
+            <tab>softaware</tab>
+            <resource>Softaware_ArastaLiveChat::config</resource>
+            <group id="general" translate="label comment" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <attribute type="expanded">1</attribute>
+                <comment><![CDATA[Connects this store to your <a href="https://arasta.softawarecommerce.com/" target="_blank" rel="noopener">Arasta</a> account. The chat widget appears once the Store ID is filled in.]]></comment>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <comment>When set to No, the widget is not loaded, no identity tokens are issued and orders are not linked to conversations.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="widget" translate="label comment" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Widget</label>
+                <attribute type="expanded">1</attribute>
+                <comment>Both values are in the embed code in the Arasta dashboard: Stores &gt; your store &gt; Widget.</comment>
+                <field id="loader_url" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Widget Loader URL</label>
+                    <comment>The src of the script in your Arasta embed code. Leave the default unless Arasta gives you a different address. Order links are sent to the same host.</comment>
+                    <backend_model>Softaware\ArastaLiveChat\Model\Config\Backend\LoaderUrl</backend_model>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="store_id" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Store ID</label>
+                    <comment>The data-store-id value of your Arasta embed code. Use a different ID per store view if each one is a separate Arasta store.</comment>
+                    <validate>validate-no-html-tags</validate>
+                </field>
+            </group>
+            <group id="identity" translate="label comment" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Identity and Order Links</label>
+                <attribute type="expanded">1</attribute>
+                <comment>With a signing secret, the widget recognises signed-in customers (signed token, never stored in cached pages) and orders placed after a chat are linked to the conversation. Without it, customers chat as guests and orders are not linked.</comment>
+                <field id="signing_secret" translate="label comment" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Signing Secret</label>
+                    <comment>From the Arasta dashboard (Stores &gt; your store &gt; Widget). At least 32 characters. Stored encrypted.</comment>
+                    <backend_model>Softaware\ArastaLiveChat\Model\Config\Backend\SigningSecret</backend_model>
+                </field>
+                <field id="ttl_seconds" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Identity Token Lifetime (seconds)</label>
+                    <comment>How long a signed customer token stays valid: 60 to 3600 seconds. A fresh token is issued when it expires.</comment>
+                    <validate>required-entry validate-digits validate-digits-range digits-range-60-3600</validate>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

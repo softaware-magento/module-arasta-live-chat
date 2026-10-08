@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Platform\Connector\Test\Unit;
+namespace Softaware\ArastaLiveChat\Test\Unit;
 
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\Exception\InputException;
@@ -9,9 +9,12 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Platform\Connector\Model\QuoteAttribute;
+use Softaware\ArastaLiveChat\Model\Config;
+use Softaware\ArastaLiveChat\Model\QuoteAttribute;
 
 class QuoteAttributeTest extends TestCase
 {
@@ -28,6 +31,17 @@ class QuoteAttributeTest extends TestCase
         return $quote;
     }
 
+    private function service(UserContextInterface $context, CartRepositoryInterface $carts, MaskedQuoteIdToQuoteIdInterface $masked, bool $enabled = true): QuoteAttribute
+    {
+        $config = $this->createMock(Config::class);
+        $config->method('isEnabled')->willReturn($enabled);
+        $store = $this->createMock(StoreInterface::class);
+        $store->method('getId')->willReturn(1);
+        $stores = $this->createMock(StoreManagerInterface::class);
+        $stores->method('getStore')->willReturn($store);
+        return new QuoteAttribute($context, $carts, $masked, $config, $stores);
+    }
+
     private function context(int $type, ?int $userId): UserContextInterface
     {
         $ctx = $this->createMock(UserContextInterface::class);
@@ -36,7 +50,7 @@ class QuoteAttributeTest extends TestCase
         return $ctx;
     }
 
-    /** R-PD-02: a logged-in customer's active cart is tagged from the session; the masked id is ignored */
+    /** a logged-in customer's active cart is tagged from the session; the masked id is ignored */
     public function testTagsTheCustomersActiveCart(): void
     {
         $quote = $this->quote(42);
@@ -47,11 +61,11 @@ class QuoteAttributeTest extends TestCase
         $masked = $this->createMock(MaskedQuoteIdToQuoteIdInterface::class);
         $masked->expects(self::never())->method('execute');
 
-        $service = new QuoteAttribute($this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42), $carts, $masked);
+        $service = $this->service($this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42), $carts, $masked);
         self::assertTrue($service->set(self::CONVERSATION, 'ignored-masked-id'));
     }
 
-    /** R-PD-02: a guest's cart is resolved from the masked quote id */
+    /** a guest's cart is resolved from the masked quote id */
     public function testTagsTheGuestCartBehindTheMaskedId(): void
     {
         $quote = $this->quote(null);
@@ -62,11 +76,11 @@ class QuoteAttributeTest extends TestCase
         $carts->method('get')->with(77)->willReturn($quote);
         $carts->expects(self::once())->method('save');
 
-        $service = new QuoteAttribute($this->context(UserContextInterface::USER_TYPE_GUEST, null), $carts, $masked);
+        $service = $this->service($this->context(UserContextInterface::USER_TYPE_GUEST, null), $carts, $masked);
         self::assertTrue($service->set(self::CONVERSATION, 'm4sk3d'));
     }
 
-    /** R-PD-02: idempotent — the same conversation id is not saved twice */
+    /** idempotent — the same conversation id is not saved twice */
     public function testSkipsTheSaveWhenAlreadyTagged(): void
     {
         $quote = $this->quote(42, self::CONVERSATION);
@@ -75,11 +89,11 @@ class QuoteAttributeTest extends TestCase
         $carts->method('getActiveForCustomer')->willReturn($quote);
         $carts->expects(self::never())->method('save');
 
-        $service = new QuoteAttribute($this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42), $carts, $this->createMock(MaskedQuoteIdToQuoteIdInterface::class));
+        $service = $this->service($this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42), $carts, $this->createMock(MaskedQuoteIdToQuoteIdInterface::class));
         self::assertTrue($service->set(self::CONVERSATION));
     }
 
-    /** R-PD-02: a masked id never reaches a customer's cart, and a guest without a cart gets 404 */
+    /** a masked id never reaches a customer's cart, and a guest without a cart gets 404 */
     public function testRefusesCustomerCartsThroughMaskedIdsAndGuestsWithoutCart(): void
     {
         $masked = $this->createMock(MaskedQuoteIdToQuoteIdInterface::class);
@@ -87,7 +101,7 @@ class QuoteAttributeTest extends TestCase
         $carts = $this->createMock(CartRepositoryInterface::class);
         $carts->method('get')->willReturn($this->quote(5));
         $carts->expects(self::never())->method('save');
-        $service = new QuoteAttribute($this->context(UserContextInterface::USER_TYPE_GUEST, null), $carts, $masked);
+        $service = $this->service($this->context(UserContextInterface::USER_TYPE_GUEST, null), $carts, $masked);
 
         try {
             $service->set(self::CONVERSATION, 'someone-elses');
@@ -99,9 +113,19 @@ class QuoteAttributeTest extends TestCase
         $service->set(self::CONVERSATION, null);
     }
 
+    /** Module disabled for the store view: nothing is tagged */
+    public function testDoesNothingWhenDisabled(): void
+    {
+        $carts = $this->createMock(CartRepositoryInterface::class);
+        $carts->expects(self::never())->method('save');
+        $service = $this->service($this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42), $carts, $this->createMock(MaskedQuoteIdToQuoteIdInterface::class), false);
+        $this->expectException(NoSuchEntityException::class);
+        $service->set(self::CONVERSATION);
+    }
+
     public function testRejectsANonUuidConversationId(): void
     {
-        $service = new QuoteAttribute(
+        $service = $this->service(
             $this->context(UserContextInterface::USER_TYPE_CUSTOMER, 42),
             $this->createMock(CartRepositoryInterface::class),
             $this->createMock(MaskedQuoteIdToQuoteIdInterface::class)

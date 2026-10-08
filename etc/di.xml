@@ -1,8 +1,26 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Platform\Connector\Api\InvoicePdfInterface" type="Platform\Connector\Model\InvoicePdf"/>
-    <preference for="Platform\Connector\Api\VersionInterface" type="Platform\Connector\Model\Version"/>
-    <preference for="Platform\Connector\Api\Data\PdfFileInterface" type="Platform\Connector\Model\Data\PdfFile"/>
-    <preference for="Platform\Connector\Api\Data\VersionInfoInterface" type="Platform\Connector\Model\Data\VersionInfo"/>
-    <preference for="Platform\Connector\Api\QuoteAttributeInterface" type="Platform\Connector\Model\QuoteAttribute"/>
+    <preference for="Softaware\ArastaLiveChat\Api\InvoicePdfInterface" type="Softaware\ArastaLiveChat\Model\InvoicePdf"/>
+    <preference for="Softaware\ArastaLiveChat\Api\VersionInterface" type="Softaware\ArastaLiveChat\Model\Version"/>
+    <preference for="Softaware\ArastaLiveChat\Api\Data\PdfFileInterface" type="Softaware\ArastaLiveChat\Model\Data\PdfFile"/>
+    <preference for="Softaware\ArastaLiveChat\Api\Data\VersionInfoInterface" type="Softaware\ArastaLiveChat\Model\Data\VersionInfo"/>
+    <preference for="Softaware\ArastaLiveChat\Api\QuoteAttributeInterface" type="Softaware\ArastaLiveChat\Model\QuoteAttribute"/>
+    <!-- Keep the signing secret out of app/etc/config.php when the configuration is dumped. -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="softaware_arasta_live_chat/identity/signing_secret" xsi:type="string">1</item>
+                <item name="platform_connector/identity/signing_secret" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Content Security Policy: allow the Arasta host configured for the store view (storefront only; global scope
+         so the item is merged into Magento's collector list instead of replacing it in the frontend area). -->
+    <type name="Magento\Csp\Model\CompositePolicyCollector">
+        <arguments>
+            <argument name="collectors" xsi:type="array">
+                <item name="softaware_arasta_live_chat" xsi:type="object" sortOrder="4">Softaware\ArastaLiveChat\Model\Csp\LoaderPolicyCollector\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

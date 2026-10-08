@@ -1,19 +1,24 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Observer;
+namespace Softaware\ArastaLiveChat\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Sales\Model\Order;
-use Platform\Connector\Model\Config;
-use Platform\Connector\Model\OrderLinkPayload;
-use Platform\Connector\Model\QuoteAttribute;
+use Softaware\ArastaLiveChat\Model\Config;
+use Softaware\ArastaLiveChat\Model\OrderLinkPayload;
+use Softaware\ArastaLiveChat\Model\QuoteAttribute;
 use Psr\Log\LoggerInterface;
 
 /**
- * R-PD-03: on `sales_order_place_after`, an order whose quote carried the conversation id is posted to the platform,
+ * On `sales_order_place_after`, an order whose quote carried an Arasta conversation id is posted to Arasta,
  * signed with the store signing secret. Best effort: any failure is logged and never affects the checkout.
  */
 class OrderPlaced implements ObserverInterface
@@ -41,13 +46,16 @@ class OrderPlaced implements ObserverInterface
         }
         try {
             $storeId = (int) $order->getStoreId();
-            $secret = $this->config->signingSecret($storeId);
-            $storeKey = $this->config->storeKey($storeId);
-            $origin = OrderLinkPayload::apiOrigin($this->config->loaderUrl($storeId));
-            if ($secret === null || $storeKey === '' || $origin === null) {
+            if (!$this->config->isEnabled($storeId)) {
                 return;
             }
-            $signed = $this->payload->build($secret, $storeKey, [
+            $secret = $this->config->signingSecret($storeId);
+            $arastaStoreId = $this->config->arastaStoreId($storeId);
+            $origin = OrderLinkPayload::apiOrigin($this->config->loaderUrl($storeId));
+            if ($secret === null || $arastaStoreId === '' || $origin === null) {
+                return;
+            }
+            $signed = $this->payload->build($secret, $arastaStoreId, [
                 'orderId' => $order->getEntityId() !== null ? (int) $order->getEntityId() : null,
                 'incrementId' => (string) $order->getIncrementId(),
                 'grandTotal' => (float) $order->getGrandTotal(),
@@ -58,10 +66,10 @@ class OrderPlaced implements ObserverInterface
             $this->http->addHeader(OrderLinkPayload::SIGNATURE_HEADER, $signed['signature']);
             $this->http->post($origin . OrderLinkPayload::PATH, $signed['body']);
             if ($this->http->getStatus() >= 300) {
-                $this->logger->warning('Platform order link rejected', ['status' => $this->http->getStatus(), 'increment_id' => $order->getIncrementId()]);
+                $this->logger->warning('Arasta Live Chat: order link rejected', ['status' => $this->http->getStatus(), 'increment_id' => $order->getIncrementId()]);
             }
         } catch (\Throwable $e) {
-            $this->logger->warning('Platform order link failed: ' . $e->getMessage(), ['increment_id' => $order->getIncrementId()]);
+            $this->logger->warning('Arasta Live Chat: order link failed: ' . $e->getMessage(), ['increment_id' => $order->getIncrementId()]);
         }
     }
 }

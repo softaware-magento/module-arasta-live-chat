@@ -1,20 +1,29 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Model;
+namespace Softaware\ArastaLiveChat\Model;
 
+use Composer\InstalledVersions;
 use Magento\Framework\App\ProductMetadataInterface;
-use Platform\Connector\Api\Data\VersionInfoInterface;
-use Platform\Connector\Api\VersionInterface;
-use Platform\Connector\Model\Data\VersionInfoFactory;
+use Softaware\ArastaLiveChat\Api\Data\VersionInfoInterface;
+use Softaware\ArastaLiveChat\Api\VersionInterface;
+use Softaware\ArastaLiveChat\Model\Data\VersionInfoFactory;
 
 /**
- * R-MOD-03: module version and the capabilities it adds, for capability discovery.
+ * `GET /V1/platform/version`: module version, Magento version and the capabilities this module adds, used by Arasta
+ * for capability discovery. The capability list is part of the contract with Arasta: only add to it.
  */
 class Version implements VersionInterface
 {
-    public const MODULE_VERSION = '1.1.0';
-    /** Phase 2 (R-PD-02/03): quote_attribute = conversation tagging endpoint, order_link = signed order post. */
+    public const PACKAGE = 'softaware/module-arasta-live-chat';
+    /** Fallback when the package was not installed with Composer (app/code). */
+    public const MODULE_VERSION = '2.0.0';
+    /** quote_attribute = conversation tagging endpoint, order_link = signed order post. */
     public const CAPABILITIES = ['invoice_pdf', 'signed_identity', 'quote_attribute', 'order_link'];
 
     public function __construct(
@@ -26,9 +35,24 @@ class Version implements VersionInterface
     public function get(): VersionInfoInterface
     {
         return $this->versionInfoFactory->create([
-            'moduleVersion' => self::MODULE_VERSION,
+            'moduleVersion' => $this->moduleVersion(),
             'magentoVersion' => $this->productMetadata->getVersion(),
             'capabilities' => self::CAPABILITIES,
         ]);
+    }
+
+    private function moduleVersion(): string
+    {
+        try {
+            if (class_exists(InstalledVersions::class) && InstalledVersions::isInstalled(self::PACKAGE)) {
+                $version = (string) InstalledVersions::getPrettyVersion(self::PACKAGE);
+                if (preg_match('/^v?(\d+\.\d+\.\d+)$/', $version, $m) === 1) {
+                    return $m[1];
+                }
+            }
+        } catch (\Throwable) {
+            // Fall through to the bundled version.
+        }
+        return self::MODULE_VERSION;
     }
 }

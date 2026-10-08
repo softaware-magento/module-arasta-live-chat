@@ -1,11 +1,16 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Api;
+namespace Softaware\ArastaLiveChat\Api;
 
 /**
- * R-PD-02 (Phase 2): tags the shopper's active quote with the platform conversation id, so the order placed from it
- * can be linked to the conversation (R-PD-03). Called by the widget loader from the storefront with the shopper's
+ * tags the shopper's active quote with the platform conversation id, so the order placed from it
+ * can be linked to the conversation. Called by the widget loader from the storefront with the shopper's
  * session (customer) or the guest's masked quote id.
  */
 interface QuoteAttributeInterface

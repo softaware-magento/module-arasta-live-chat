@@ -1,17 +1,22 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Model;
+namespace Softaware\ArastaLiveChat\Model;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Model\Order\Pdf\Invoice as InvoicePdfRenderer;
-use Platform\Connector\Api\Data\PdfFileInterface;
-use Platform\Connector\Api\InvoicePdfInterface;
-use Platform\Connector\Model\Data\PdfFileFactory;
+use Softaware\ArastaLiveChat\Api\Data\PdfFileInterface;
+use Softaware\ArastaLiveChat\Api\InvoicePdfInterface;
+use Softaware\ArastaLiveChat\Model\Data\PdfFileFactory;
 
 /**
- * R-MOD-01: renders the invoice with the store's own PDF template and returns it base64-encoded.
+ * renders the invoice with the store's own PDF template and returns it base64-encoded.
  */
 class InvoicePdf implements InvoicePdfInterface
 {

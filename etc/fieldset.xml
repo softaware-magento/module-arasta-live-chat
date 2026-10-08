@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- R-PD-03: the quote's conversation id is copied to the order when the quote converts. -->
+<!-- The conversation id is copied to the order when the quote converts (see also Observer\CopyConversationToOrder). -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:DataObject/etc/fieldset.xsd">
     <scope id="global">
         <fieldset id="sales_convert_quote">

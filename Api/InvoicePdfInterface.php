@@ -1,16 +1,21 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Api;
+namespace Softaware\ArastaLiveChat\Api;
 
 /**
- * R-MOD-01: the store's own invoice PDF.
+ * the store's own invoice PDF.
  */
 interface InvoicePdfInterface
 {
     /**
      * @param int $invoiceId
-     * @return \Platform\Connector\Api\Data\PdfFileInterface
+     * @return \Softaware\ArastaLiveChat\Api\Data\PdfFileInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function get(int $invoiceId): Data\PdfFileInterface;

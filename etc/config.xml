@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <platform_connector>
+        <softaware_arasta_live_chat>
+            <general>
+                <enabled>1</enabled>
+            </general>
             <widget>
-                <loader_url/>
-                <store_key/>
+                <loader_url>https://app.arasta.io/widget/v1/assets/loader.js</loader_url>
+                <store_id/>
             </widget>
             <identity>
                 <signing_secret/>
                 <ttl_seconds>3600</ttl_seconds>
             </identity>
-        </platform_connector>
+        </softaware_arasta_live_chat>
     </default>
 </config>

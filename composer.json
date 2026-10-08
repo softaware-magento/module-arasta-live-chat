@@ -1,45 +1,38 @@
 {
-    "name": "platform/module-connector",
-    "description": "Minimal connector for the platform: invoice PDF endpoint, signed customer identity, version endpoint, quote attribute + order link (attribution seed).",
+    "name": "softaware/module-arasta-live-chat",
+    "description": "Connects Magento 2 to Arasta live chat and support: widget loader on Luma and Hyvä, signed customer identity, invoice PDF and version REST endpoints, and order-to-conversation linking.",
     "type": "magento2-module",
-    "version": "1.1.0",
     "license": "proprietary",
     "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "^103.0",
-        "magento/module-sales": "*",
+        "php": "~8.2.0||~8.3.0||~8.4.0||~8.5.0",
+        "magento/framework": "~103.0.7",
+        "softaware/module-core": "^1.0",
+        "magento/module-authorization": "*",
+        "magento/module-backend": "*",
+        "magento/module-checkout": "*",
+        "magento/module-config": "*",
+        "magento/module-csp": "*",
         "magento/module-customer": "*",
-        "magento/module-store": "*",
+        "magento/module-integration": "*",
         "magento/module-quote": "*",
-        "magento/module-checkout": "*"
+        "magento/module-sales": "*",
+        "magento/module-store": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5",
-        "phpstan/phpstan": "^2.1",
-        "bitexpert/phpstan-magento": "^0.40"
+        "phpunit/phpunit": "^10.5"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://mirror.mage-os.org/",
-            "only": [
-                "magento/*"
-            ]
-        }
-    ],
+    "conflict": {
+        "platform/module-connector": "*"
+    },
+    "suggest": {
+        "hyva-themes/magento2-default-theme": "Hyvä storefront support (templates included)"
+    },
     "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
-            "Platform\\Connector\\": ""
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "magento/composer-dependency-version-audit-plugin": false,
-            "magento/magento-composer-installer": false,
-            "phpstan/extension-installer": true
+            "Softaware\\ArastaLiveChat\\": ""
         }
     }
 }

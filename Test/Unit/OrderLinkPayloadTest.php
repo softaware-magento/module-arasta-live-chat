@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Platform\Connector\Test\Unit;
+namespace Softaware\ArastaLiveChat\Test\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Platform\Connector\Model\OrderLinkPayload;
+use Softaware\ArastaLiveChat\Model\OrderLinkPayload;
 
 class OrderLinkPayloadTest extends TestCase
 {
@@ -12,7 +12,7 @@ class OrderLinkPayloadTest extends TestCase
     private const STORE = '0199a0e8-7b1c-7000-8000-000000000010';
     private const CONVERSATION = '0199a0e8-7b1c-7000-8000-000000000001';
 
-    /** R-PD-03: body carries store key, order ids, total, currency and conversation id; signature is sha256=HMAC(body) */
+    /** body carries store key, order ids, total, currency and conversation id; signature is sha256=HMAC(body) */
     public function testBuildsSignedBody(): void
     {
         $signed = (new OrderLinkPayload())->build(self::SECRET, self::STORE, [
@@ -25,7 +25,7 @@ class OrderLinkPayloadTest extends TestCase
         self::assertSame('sha256=' . hash_hmac('sha256', $signed['body'], self::SECRET), $signed['signature']);
     }
 
-    /** R-PD-03: the order entity id may be unknown at sales_order_place_after; the increment id identifies the order */
+    /** the order entity id may be unknown at sales_order_place_after; the increment id identifies the order */
     public function testAllowsMissingEntityId(): void
     {
         $signed = (new OrderLinkPayload())->build(self::SECRET, self::STORE, [
@@ -42,7 +42,7 @@ class OrderLinkPayloadTest extends TestCase
         (new OrderLinkPayload())->build('short', self::STORE, ['orderId' => 1, 'incrementId' => '1', 'grandTotal' => 1.0, 'currency' => 'GBP'], self::CONVERSATION);
     }
 
-    /** R-PD-03: the platform API origin is derived from the configured loader URL */
+    /** the platform API origin is derived from the configured loader URL */
     public function testDerivesApiOriginFromLoaderUrl(): void
     {
         self::assertSame('https://api.example.com', OrderLinkPayload::apiOrigin('https://api.example.com/widget/v1/assets/loader.js'));

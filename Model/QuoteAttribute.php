@@ -1,7 +1,12 @@
 <?php
+/**
+ * Softaware Arasta Live Chat
+ *
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
 declare(strict_types=1);
 
-namespace Platform\Connector\Model;
+namespace Softaware\ArastaLiveChat\Model;
 
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\Exception\InputException;
@@ -10,12 +15,13 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\Quote;
-use Platform\Connector\Api\QuoteAttributeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Softaware\ArastaLiveChat\Api\QuoteAttributeInterface;
 
 /**
- * R-PD-02: writes `platform_conversation_id` on the active quote. The quote is resolved server-side: a logged-in
+ * `POST /V1/platform/quote/attribute`: writes `platform_conversation_id` on the active quote. The quote is resolved server-side: a logged-in
  * customer's active cart from the web API user context (storefront session), else the guest cart behind the masked id.
- * The attribute is copied to the order (etc/fieldset.xml) and posted to the platform when the order is placed.
+ * The attribute is copied to the order (etc/fieldset.xml) and posted to Arasta when the order is placed.
  */
 class QuoteAttribute implements QuoteAttributeInterface
 {
@@ -25,7 +31,9 @@ class QuoteAttribute implements QuoteAttributeInterface
     public function __construct(
         private readonly UserContextInterface $userContext,
         private readonly CartRepositoryInterface $carts,
-        private readonly MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
+        private readonly MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
+        private readonly Config $config,
+        private readonly StoreManagerInterface $storeManager
     ) {
     }
 
@@ -33,6 +41,10 @@ class QuoteAttribute implements QuoteAttributeInterface
     {
         if (preg_match(self::UUID, $conversationId) !== 1) {
             throw new InputException(__('conversationId must be a UUID.'));
+        }
+        if (!$this->config->isEnabled((int) $this->storeManager->getStore()->getId())) {
+            // Module switched off for this store view: behave as if there were nothing to tag.
+            throw new NoSuchEntityException(__('No active cart.'));
         }
         $quote = $this->resolveQuote($cartId);
         if ($quote->getData(self::ATTRIBUTE) === $conversationId) {
