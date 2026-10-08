@@ -1,0 +1,136 @@
+{
+    "tagline": "Add Arasta live chat to your Magento store without touching the theme, recognise signed-in customers and link orders to the chats that led to them.",
+    "key_features": [
+        "Arasta chat widget on every page, including checkout",
+        "Signed-in customers recognised with a signed token",
+        "Orders linked to the conversation",
+        "Invoice PDFs for your Arasta agents",
+        "Settings per store view, secret stored encrypted",
+        "Full-page cache safe",
+        "Content Security Policy ready",
+        "Hyvä and Luma templates included"
+    ],
+    "benefits": [
+        {
+            "icon": "bolt",
+            "title": "No theme edits",
+            "text": "Paste the Store ID from your Arasta embed code into the settings. The module adds the widget to every page, on Luma and Hyvä."
+        },
+        {
+            "icon": "shield",
+            "title": "Customers you can trust",
+            "text": "Signed-in customers reach your agents with a short-lived token signed with your secret, so nobody can chat in someone else's name."
+        },
+        {
+            "icon": "cart",
+            "title": "See which chats lead to orders",
+            "text": "Orders placed after a chat are linked to the conversation and sent to Arasta with the order number, total and currency."
+        }
+    ],
+    "showcase": [
+        {
+            "label": "Storefront",
+            "title": "The embed code, added for you",
+            "text": "The same loader tag as Arasta's embed code, added once and asynchronously on every page, including the cart and checkout.",
+            "image": "docs/images/storefront-luma.png"
+        },
+        {
+            "label": "Hyvä",
+            "title": "Native Hyvä template",
+            "text": "Vanilla JavaScript with Hyvä private content, no RequireJS. For signed-in customers the signed token is added in the browser, never in cached pages.",
+            "image": "docs/images/storefront-hyva.png"
+        },
+        {
+            "label": "Settings",
+            "title": "Four fields, per store view",
+            "text": "Loader URL, Store ID, signing secret (stored encrypted) and token lifetime, with an Enabled switch for each store view.",
+            "image": "docs/images/admin-settings.png"
+        },
+        {
+            "label": "REST API",
+            "title": "One permission for the Arasta integration",
+            "text": "Tick Arasta Live Chat API in the integration and Arasta can fetch your invoice PDFs and check which features your store supports.",
+            "image": "docs/images/admin-integration.png"
+        }
+    ],
+    "feature_groups": [
+        {
+            "title": "Widget",
+            "items": [
+                "Loader tag on every storefront page, including checkout",
+                "Loaded asynchronously, added once",
+                "Default loader URL prefilled",
+                "Different Store ID per store view",
+                "Enabled switch per store view"
+            ]
+        },
+        {
+            "title": "Customer identity",
+            "items": [
+                "HS256 token with customer ID and email",
+                "Lifetime from 60 seconds to one hour",
+                "Expired tokens replaced in the browser",
+                "Private customer data, never in full-page cache",
+                "Guest cart ID for conversation tagging"
+            ]
+        },
+        {
+            "title": "Orders",
+            "items": [
+                "Conversation ID stored on the cart and the order",
+                "Signed order link sent to Arasta at checkout",
+                "3-second timeout, never blocks the checkout",
+                "Failures logged, not shown to shoppers"
+            ]
+        },
+        {
+            "title": "Security",
+            "items": [
+                "Signing secret stored encrypted and marked sensitive",
+                "HTTPS-only loader URL",
+                "Masked cart IDs never reach customer carts",
+                "Content Security Policy whitelist for app.arasta.io",
+                "Own ACL resources for settings and API"
+            ]
+        },
+        {
+            "title": "Integration",
+            "items": [
+                "Invoice PDF endpoint (store's own template)",
+                "Version and capability endpoint",
+                "Public cart tagging endpoint for the widget",
+                "Upgrade path from platform/module-connector"
+            ]
+        },
+        {
+            "title": "Compatibility",
+            "items": [
+                "Magento Open Source and Adobe Commerce 2.4.7 – 2.4.9",
+                "PHP 8.2 – 8.5",
+                "Luma, Blank and child themes",
+                "Hyvä 1.3+"
+            ]
+        }
+    ],
+    "demo": {
+        "storefront": [
+            {
+                "label": "Luma storefront",
+                "url": "https://demo.softawarecommerce.com/",
+                "image": "docs/images/storefront-luma.png"
+            },
+            {
+                "label": "Hyvä storefront",
+                "url": "https://demo.softawarecommerce.com/hyva/",
+                "image": "docs/images/storefront-hyva.png"
+            }
+        ],
+        "admin": [
+            {
+                "label": "Admin panel",
+                "url": "https://demo.softawarecommerce.com/try-admin/arasta-live-chat",
+                "image": "docs/images/admin-settings.png"
+            }
+        ]
+    }
+}
