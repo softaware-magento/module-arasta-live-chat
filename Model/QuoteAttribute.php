@@ -9,6 +9,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
+use Magento\Quote\Model\Quote;
 use Platform\Connector\Api\QuoteAttributeInterface;
 
 /**
@@ -45,21 +46,35 @@ class QuoteAttribute implements QuoteAttributeInterface
     /**
      * @throws NoSuchEntityException when the shopper has no active quote
      */
-    private function resolveQuote(?string $cartId): CartInterface
+    private function resolveQuote(?string $cartId): Quote
     {
         $customerId = (int) $this->userContext->getUserId();
         if ($this->userContext->getUserType() === UserContextInterface::USER_TYPE_CUSTOMER && $customerId > 0) {
-            return $this->carts->getActiveForCustomer($customerId);
+            return $this->asQuote($this->carts->getActiveForCustomer($customerId));
         }
         if ($cartId === null || $cartId === '') {
             throw new NoSuchEntityException(__('No active cart.'));
         }
         $quoteId = $this->maskedQuoteIdToQuoteId->execute($cartId);
-        $quote = $this->carts->get($quoteId);
+        $quote = $this->asQuote($this->carts->get($quoteId));
         if ($quote->getCustomerId()) {
             // A masked id never grants access to a customer's cart; the customer session does.
             throw new NoSuchEntityException(__('No active cart.'));
         }
         return $quote;
+    }
+
+    /**
+     * The cart repository returns the CartInterface contract; the custom attribute and the customer id are read and
+     * written through the Quote model's data accessors.
+     *
+     * @throws NoSuchEntityException
+     */
+    private function asQuote(CartInterface $cart): Quote
+    {
+        if (!$cart instanceof Quote) {
+            throw new NoSuchEntityException(__('No active cart.'));
+        }
+        return $cart;
     }
 }

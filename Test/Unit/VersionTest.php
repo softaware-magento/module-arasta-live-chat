@@ -20,7 +20,7 @@ class VersionTest extends TestCase
         $factory->method('create')->willReturnCallback(fn (array $data) => new VersionInfo(...$data));
 
         $info = (new Version($metadata, $factory))->get();
-        self::assertSame('1.0.0', $info->getModuleVersion());
+        self::assertSame('1.1.0', $info->getModuleVersion());
         self::assertSame('2.4.9', $info->getMagentoVersion());
         self::assertSame(['invoice_pdf', 'signed_identity', 'quote_attribute', 'order_link'], $info->getCapabilities());
     }

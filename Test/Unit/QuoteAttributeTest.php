@@ -20,7 +20,9 @@ class QuoteAttributeTest extends TestCase
     /** @return Quote&MockObject */
     private function quote(?int $customerId, ?string $current = null): Quote
     {
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->onlyMethods(['getCustomerId', 'getData', 'setData'])->getMock();
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->onlyMethods(['getData', 'setData'])
+            // getCustomerId is a magic DataObject getter, not a declared method of Quote.
+            ->addMethods(['getCustomerId'])->getMock();
         $quote->method('getCustomerId')->willReturn($customerId);
         $quote->method('getData')->with(QuoteAttribute::ATTRIBUTE)->willReturn($current);
         return $quote;
