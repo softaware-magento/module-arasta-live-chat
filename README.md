@@ -1,6 +1,6 @@
 # Softaware Arasta Live Chat for Magento 2
 
-Connects a Magento store to [Arasta](https://arasta.softawarecommerce.com/), SoftAware's live chat and support
+Connects a Magento store to Arasta, SoftAware's live chat and support
 platform. The module adds the Arasta chat widget to every storefront page (Luma and Hyvä), tells the widget which
 customer is signed in with a short-lived signed token, lets Arasta fetch invoice PDFs, and links orders placed after
 a chat to the conversation.
@@ -23,7 +23,7 @@ Replaces `platform/module-connector` (`Platform_Connector`) 1.x; see [Upgrading 
   component; Hyvä gets its own vanilla JavaScript template (no RequireJS), picked automatically through the
   `hyva_default` layout handle.
 - **Signed customer identity**: for signed-in customers the tag gets `data-customer-token`, an HS256 JWT signed with
-  the store's Arasta signing secret (claims `sub` = customer ID, `email`, `iat`, `exp`; lifetime 60–3600 seconds).
+  the store's Arasta signing secret (claims `sub` = customer ID, `email`, `iat`, `exp`; lifetime 60 to 3600 seconds).
   The token comes from a private customer-data section (`platform-identity`), so it is never part of full-page-cached
   HTML. Expired tokens are replaced in the browser. For guests with a cart the tag gets `data-cart-id` (masked
   quote ID). Every change is announced with the `platform:identity` window event.
@@ -39,7 +39,7 @@ Replaces `platform/module-connector` (`Platform_Connector`) 1.x; see [Upgrading 
 
 ## Requirements
 
-Magento Open Source or Adobe Commerce 2.4.7 – 2.4.9, PHP 8.2 – 8.5, `softaware/module-core` ^1.0 (installed
+Magento Open Source or Adobe Commerce 2.4.7 to 2.4.9, PHP 8.2 to 8.5, `softaware/module-core` ^1.0 (installed
 automatically). Themes: Luma, Blank and their children; Hyvä 1.3+ (the Hyvä checkout uses the Luma fallback, where the
 Luma template is used).
 
@@ -66,7 +66,7 @@ set per website and store view.
 | Widget Loader URL | `softaware_arasta_live_chat/widget/loader_url` | `https://app.arasta.io/widget/v1/assets/loader.js` |
 | Store ID | `softaware_arasta_live_chat/widget/store_id` | empty |
 | Signing Secret (encrypted, at least 32 characters) | `softaware_arasta_live_chat/identity/signing_secret` | empty |
-| Identity Token Lifetime (seconds, 60–3600) | `softaware_arasta_live_chat/identity/ttl_seconds` | 3600 |
+| Identity Token Lifetime (seconds, 60 to 3600) | `softaware_arasta_live_chat/identity/ttl_seconds` | 3600 |
 
 Copy the Store ID (`data-store-id` of the embed code) and the signing secret from the Arasta dashboard (Stores > your
 store > Widget). The widget appears once the Store ID is set. Without a signing secret, customers chat as guests and
@@ -89,8 +89,8 @@ resources Arasta asks for. Save and **Reauthorize**.
 
 | Method and URL | Access | Request | Response |
 | --- | --- | --- | --- |
-| `GET /V1/platform/invoices/:invoiceId/pdf` | `Softaware_ArastaLiveChat::api` | – | `{"file_name", "content_type": "application/pdf", "content": "<base64>"}`; 404 for an unknown invoice |
-| `GET /V1/platform/version` | `Softaware_ArastaLiveChat::api` | – | `{"module_version", "magento_version", "capabilities": ["invoice_pdf", "signed_identity", "quote_attribute", "order_link"]}` |
+| `GET /V1/platform/invoices/:invoiceId/pdf` | `Softaware_ArastaLiveChat::api` | none | `{"file_name", "content_type": "application/pdf", "content": "<base64>"}`; 404 for an unknown invoice |
+| `GET /V1/platform/version` | `Softaware_ArastaLiveChat::api` | none | `{"module_version", "magento_version", "capabilities": ["invoice_pdf", "signed_identity", "quote_attribute", "order_link"]}` |
 | `POST /V1/platform/quote/attribute` | anonymous (shopper's browser) | `{"conversationId": "<UUID>", "cartId": "<masked quote ID, guests only>"}` | `true`; 400 for a non-UUID, 404 without an active cart |
 
 The quote attribute endpoint resolves the cart on the server: a signed-in customer's active cart from the session

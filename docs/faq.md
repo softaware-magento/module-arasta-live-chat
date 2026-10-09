@@ -1,4 +1,4 @@
-# Arasta Live Chat for Magento 2 — FAQ
+# Arasta Live Chat for Magento 2: FAQ
 
 **What does the module do?**
 It adds the Arasta chat widget to your storefront, lets the widget recognise signed-in customers with a signed

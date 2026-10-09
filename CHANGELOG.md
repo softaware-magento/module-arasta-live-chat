@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1 (2026-10-09)
+
+### Changed
+
+- Docs (listing, FAQ, user guide, README): dashes replaced with plain punctuation ("2.4.7 to 2.4.9", "PHP 8.2 to
+  8.5") and the link to the Arasta website removed. No code changes.
+
 ## 2.0.0 (2026-10-08)
 
 The connector is now a SoftAware module: package `softaware/module-arasta-live-chat`, module
@@ -25,7 +32,7 @@ response shapes, the capabilities reported by `/V1/platform/version`, the identi
 
 ### Added
 
-- PHP 8.5 support (PHP 8.2 – 8.5).
+- PHP 8.5 support (PHP 8.2 to 8.5).
 - Admin settings: Stores > Configuration > Softaware > Arasta Live Chat (Enabled, Widget Loader URL, Store ID,
   Signing Secret stored encrypted, Identity Token Lifetime), per website and store view, with their own ACL resource
   `Softaware_ArastaLiveChat::config`. The secret must be at least 32 characters and the loader URL must be https.
@@ -51,7 +58,7 @@ response shapes, the capabilities reported by `/V1/platform/version`, the identi
 - The quote attribute service narrows the cart repository's `CartInterface` to `Quote` before using its data
   accessors (fix made after the 1.1.0 tag).
 
-## 1.1.0 (2026-10-08) — as `platform/module-connector`
+## 1.1.0 (2026-10-08) as `platform/module-connector`
 
 First release in this repository (package `platform/module-connector`, module `Platform_Connector`):
 

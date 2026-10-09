@@ -1,6 +1,6 @@
-# Arasta Live Chat for Magento 2 — User Guide
+# Arasta Live Chat for Magento 2: User Guide
 
-Connects your store to [Arasta](https://arasta.softawarecommerce.com/), SoftAware's live chat and support platform:
+Connects your store to Arasta, SoftAware's live chat and support platform:
 the chat widget on every storefront page, signed-in customers recognised in the chat, invoice PDFs for your agents,
 and orders linked to the conversation that led to them.
 
@@ -13,8 +13,8 @@ and orders linked to the conversation that led to them.
 
 | | |
 | --- | --- |
-| Magento | Open Source or Adobe Commerce 2.4.7 – 2.4.9 |
-| PHP | 8.2 – 8.5 |
+| Magento | Open Source or Adobe Commerce 2.4.7 to 2.4.9 |
+| PHP | 8.2 to 8.5 |
 | Themes | Luma, Blank and themes based on them; Hyvä 1.3+ |
 | Other | An Arasta account; `softaware/module-core` (installed automatically) |
 
@@ -64,20 +64,20 @@ when each one is a separate store in Arasta.
 
 **General**
 
-- **Enabled** — Yes by default. When No, the widget is not loaded, no identity tokens are issued, carts are not
+- **Enabled**: Yes by default. When No, the widget is not loaded, no identity tokens are issued, carts are not
   tagged and orders are not linked. The invoice PDF and version endpoints stay available to the integration.
 
 **Widget**
 
-- **Widget Loader URL** — the `src` of the embed code. Default `https://app.arasta.io/widget/v1/assets/loader.js`.
+- **Widget Loader URL**: the `src` of the embed code. Default `https://app.arasta.io/widget/v1/assets/loader.js`.
   Must start with `https://`. Order links are sent to the same host.
-- **Store ID** — the `data-store-id` of the embed code. The widget is only added when this is filled in.
+- **Store ID**: the `data-store-id` of the embed code. The widget is only added when this is filled in.
 
 **Customer Identity and Order Links**
 
-- **Signing Secret** — from the Arasta dashboard, at least 32 characters, stored encrypted. Without it customers chat
+- **Signing Secret**: from the Arasta dashboard, at least 32 characters, stored encrypted. Without it customers chat
   as guests and orders are not linked.
-- **Identity Token Lifetime (seconds)** — 60 to 3600, default 3600. A new token is fetched in the background before
+- **Identity Token Lifetime (seconds)**: 60 to 3600, default 3600. A new token is fetched in the background before
   the current one expires.
 
 You can also set any of these with `bin/magento config:set` (add `--lock-env` to keep a value in `app/etc/env.php`),
@@ -139,8 +139,8 @@ allows that host on the storefront automatically.
 
 Under **System > Permissions > User Roles > Role Resources**:
 
-- **Softaware > Arasta Live Chat > Arasta Live Chat Settings** — the configuration section.
-- **Softaware > Arasta Live Chat > Arasta Live Chat API** — the REST endpoints (meant for the Arasta integration).
+- **Softaware > Arasta Live Chat > Arasta Live Chat Settings**: the configuration section.
+- **Softaware > Arasta Live Chat > Arasta Live Chat API**: the REST endpoints (meant for the Arasta integration).
 
 ## 9. Privacy
 
@@ -151,13 +151,13 @@ banner, classify the chat widget according to your Arasta setup.
 
 ## 10. Troubleshooting
 
-- **No widget on the storefront** — check that the module is enabled for the store view and the Store ID is set,
+- **No widget on the storefront**: check that the module is enabled for the store view and the Store ID is set,
   then flush the full-page cache. View the page source and search for `platform-widget-loader`.
-- **Widget appears twice** — remove the hand-made Arasta `<script>` from your theme, CMS blocks or tag manager.
-- **Customers are not recognised** — set the Signing Secret (same value as in Arasta) and sign in again.
-- **Orders are not linked** — the Signing Secret must be set; check `var/log/system.log` for "Arasta Live Chat: order
+- **Widget appears twice**: remove the hand-made Arasta `<script>` from your theme, CMS blocks or tag manager.
+- **Customers are not recognised**: set the Signing Secret (same value as in Arasta) and sign in again.
+- **Orders are not linked**: the Signing Secret must be set; check `var/log/system.log` for "Arasta Live Chat: order
   link" messages; the server must be able to reach the loader host over HTTPS.
-- **REST answers "The consumer isn't authorized"** — tick **Arasta Live Chat API** in the integration and
+- **REST answers "The consumer isn't authorized"**: tick **Arasta Live Chat API** in the integration and
   reauthorise it.
-- **Saving the settings fails** — the Signing Secret must be at least 32 characters and the Loader URL must start
+- **Saving the settings fails**: the Signing Secret must be at least 32 characters and the Loader URL must start
   with `https://`.
