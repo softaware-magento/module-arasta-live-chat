@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.0 (unreleased)
+
+### Added
+
+- **Telephone Attribute** (Customer Identity and Order Links): choose the customer attribute that holds the customer's
+  phone number (Magento has no standard one). When set and the signed-in customer has a value, the identity token also
+  carries a `phone` claim, which Arasta uses to match the customer with the same person on other channels (for example
+  WhatsApp). Select an attribute only if your website verifies the phone number. Empty by default: tokens are unchanged.
+
 ## 2.0.1 (2026-10-09)
 
 ### Changed

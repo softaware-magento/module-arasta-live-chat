@@ -14,3 +14,6 @@
 "conversationId must be a UUID.","conversationId must be a UUID."
 "No active cart.","No active cart."
 "Invoice %1 does not exist.","Invoice %1 does not exist."
+"Telephone Attribute","Telephone Attribute"
+"-- Not used --","-- Not used --"
+"Matches a signed-in customer with the same person on other channels (for example WhatsApp). Select an attribute only if your website verifies the phone number (for example with an SMS code).","Matches a signed-in customer with the same person on other channels (for example WhatsApp). Select an attribute only if your website verifies the phone number (for example with an SMS code)."

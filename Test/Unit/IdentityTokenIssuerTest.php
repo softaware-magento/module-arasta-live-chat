@@ -26,6 +26,17 @@ class IdentityTokenIssuerTest extends TestCase
         self::assertSame($expected, $signature);
     }
 
+    /** Phone matching: the phone claim is added only when a value is given (trimmed), never as an empty claim */
+    public function testAddsPhoneClaimOnlyWithAValue(): void
+    {
+        $issuer = new IdentityTokenIssuer();
+        $with = $this->decode(explode('.', $issuer->issue(self::SECRET, 7, 'a@b.c', 100, 3600, ' +44 7700 900123 '))[1]);
+        self::assertSame('+44 7700 900123', $with['phone']);
+        foreach ([null, '', '   '] as $empty) {
+            self::assertArrayNotHasKey('phone', $this->decode(explode('.', $issuer->issue(self::SECRET, 7, 'a@b.c', 100, 3600, $empty))[1]));
+        }
+    }
+
     /** exp is capped at one hour */
     public function testCapsLifetimeAtOneHour(): void
     {

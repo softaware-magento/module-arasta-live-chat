@@ -22,7 +22,7 @@ class Version implements VersionInterface
 {
     public const PACKAGE = 'softaware/module-arasta-live-chat';
     /** Fallback when the package was not installed with Composer (app/code). */
-    public const MODULE_VERSION = '2.0.0';
+    public const MODULE_VERSION = '2.1.0';
     /** quote_attribute = conversation tagging endpoint, order_link = signed order post. */
     public const CAPABILITIES = ['invoice_pdf', 'signed_identity', 'quote_attribute', 'order_link'];
 

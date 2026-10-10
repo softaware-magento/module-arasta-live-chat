@@ -59,13 +59,25 @@ class IdentityToken implements SectionSourceInterface
         $now = time();
         $ttl = min(max($this->config->tokenLifetime($storeId), IdentityTokenIssuer::MIN_TTL_SECONDS), IdentityTokenIssuer::MAX_TTL_SECONDS);
         try {
-            $token = $this->issuer->issue($secret, $customerId, (string) $this->currentCustomer->getCustomer()->getEmail(), $now, $ttl);
+            $customer = $this->currentCustomer->getCustomer();
+            $token = $this->issuer->issue($secret, $customerId, (string) $customer->getEmail(), $now, $ttl, $this->phone($customer, $storeId));
         } catch (\InvalidArgumentException $e) {
             // Secret shorter than 32 characters (only possible through env.php / config:set): no token.
             $this->logger->warning('Arasta Live Chat: identity token not issued: ' . $e->getMessage());
             return self::EMPTY;
         }
         return ['token' => $token, 'expiresAt' => $now + $ttl, 'cartId' => null];
+    }
+
+    /** The selected telephone attribute's value; null when no attribute is selected or the customer has none. */
+    private function phone(\Magento\Customer\Api\Data\CustomerInterface $customer, int $storeId): ?string
+    {
+        $code = $this->config->phoneAttribute($storeId);
+        if ($code === null) {
+            return null;
+        }
+        $value = $customer->getCustomAttribute($code)?->getValue();
+        return is_scalar($value) && trim((string) $value) !== '' ? (string) $value : null;
     }
 
     /** Masked id of the guest's active quote (created on demand, as the guest cart API does); null without a quote. */

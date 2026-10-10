@@ -12,6 +12,7 @@
             <identity>
                 <signing_secret/>
                 <ttl_seconds>3600</ttl_seconds>
+                <phone_attribute/>
             </identity>
         </softaware_arasta_live_chat>
     </default>

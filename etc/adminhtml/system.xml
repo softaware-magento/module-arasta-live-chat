@@ -46,6 +46,11 @@
                     <comment>How long a signed customer token stays valid: 60 to 3600 seconds. A fresh token is issued when it expires.</comment>
                     <validate>required-entry validate-digits validate-digits-range digits-range-60-3600</validate>
                 </field>
+                <field id="phone_attribute" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Telephone Attribute</label>
+                    <comment>Matches a signed-in customer with the same person on other channels (for example WhatsApp). Select an attribute only if your website verifies the phone number (for example with an SMS code).</comment>
+                    <source_model>Softaware\ArastaLiveChat\Model\Config\Source\CustomerPhoneAttribute</source_model>
+                </field>
             </group>
         </section>
     </system>

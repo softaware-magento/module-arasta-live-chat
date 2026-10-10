@@ -29,6 +29,8 @@ class Config
     public const XML_STORE_ID = 'widget/store_id';
     public const XML_SECRET = 'identity/signing_secret';
     public const XML_TTL = 'identity/ttl_seconds';
+    /** Customer attribute holding a verified phone number (empty = not used). */
+    public const XML_PHONE_ATTRIBUTE = 'identity/phone_attribute';
 
     /** New field => the 1.x field under `platform_connector/`. */
     public const LEGACY_FIELDS = [
@@ -88,6 +90,13 @@ class Config
     {
         $ttl = (int) $this->value(self::XML_TTL, $storeId);
         return $ttl > 0 ? $ttl : self::DEFAULT_TTL;
+    }
+
+    /** Code of the customer attribute with the verified phone number; null when not used. */
+    public function phoneAttribute(?int $storeId = null): ?string
+    {
+        $code = trim($this->value(self::XML_PHONE_ATTRIBUTE, $storeId));
+        return $code !== '' ? $code : null;
     }
 
     private function value(string $field, ?int $storeId): string
